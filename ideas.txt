@@ -1,0 +1,12 @@
+	IDEAS:
+	
+	-When something would make you unconscious, you start to experience some events not making any sense to you, which would look like an e.g. jump through the plot or maybe your somehow altered memories (e.g. 3 virtual days ago you've hunted a dragon and not, in this time game you can experience it but in an altered way, e.g. you may be a frog ^^) in which you may, if you can, interact. Then you would wake up and figure it out that this was just a dream. Or maybe it wasn't just a dream ;]
+	
+	-How an editor might work:
+Simple map creator build in which you may select desired space on the map -> 
+You will be asked to choose the type of an object which you want to place->
+If there is no desired archetype in the database, you will be asked to create one ->
+If you say yes, object creator will be executed ->
+You will be asked to choose the material type ->
+If there is no desired archetype in the database, you will be asked to create one -> 
+e.t.c. e.t.c.
