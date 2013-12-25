@@ -2,6 +2,7 @@
 #include "myhead.h"
 /*Include Sleep function*/
 #include <windows.h>
+#include <assert.h>
 
 /*'Matrix' is made of 80x24 characters + one '\n' on each of the line*/
 char asciiTerminal[WIDTH][HEIGHT];
@@ -14,11 +15,11 @@ int main()
 	drawInterface();
 //	if (userLogin() != EXIT)
 //	{
-//		unlockInterface(&asciiTerminal);
+		unlockInterface();
+		getch();
 //		playGame(&username);
 //	}
-//	lockInterface(&asciiTerminal);
-	getch();
+	lockInterface();
 	endwin();
 	return 0;
 }
@@ -27,15 +28,66 @@ int main()
 /*Syntax: drawInterface()*/
 void drawInterface()
 {
+	curs_set(0);
+	neonAnimation(. . . LOADING . . ., 18);
+	Sleep (60);
 	arrayTheArt();
-	moveAndPrint(18, 18);
+	
+	int j = 80, i;
+	for (i = 0; i != j; i++)
+	{
+		move(18,i);
+		printw("%c",asciiTerminal[i][17]);
+		move(18,j);
+		printw("%c",asciiTerminal[j][17]);
+		wrefresh(stdscr);
+		j--;
+		Sleep (10);
+	}
+	move(18,40);
+	printw("%c",asciiTerminal[40][17]);
 	wrefresh(stdscr);
+	
 	ejectAnimation(19, down);
+	Sleep (60);
 	ejectAnimation(17, up);
-	/*TODO: Finish this function*/
-	move(20,6);
+	CUR;
+	curs_set(1);
 }
 /*End of drawInterface*/
+
+/*Syntax: neonAnimation(text, in what line)*/
+void f_neonAnimation(char* text, int line)
+{
+	int length = 0, i, origin = 0;
+	
+	/*Calculate string length*/
+	while(text[length] != '\0')
+	{
+		length++;
+	}
+	origin = 40 - (length/2);
+	
+	/*Print it on the center of chosen line*/
+	for (i = 0; i <= length; i++)
+	{
+		move(line, origin+i);
+		printw("%c", text[i]);
+		wrefresh(stdscr);
+		Sleep (40);
+	}
+	i = 0;
+	
+	/*De-print it*/
+	for (i = 0; i <= length; i++)
+	{
+		move(line, origin+i);
+		printw(" ");
+		wrefresh(stdscr);
+		Sleep (40);
+	}
+}
+/*End of f_neonAnimation*/
 
 /*Syntax: arrayTheArt()*/
 void arrayTheArt()
@@ -43,20 +95,24 @@ void arrayTheArt()
 	/*Really don't know why it has to be 82, but in any other case it just 
 	 * doesn't work*/
 	char translate[82];
+//	memset(translate, '\0', sizeof(translate));
 	int i = 0, j = 0;
 	
 	FILE *pFile = fopen ("asciiart.txt" , "r");
-	/*If file cannot be opened, show an error*/
-	if (pFile == NULL) perror ("Error opening file");
+	/*If file cannot be opened, show an error and then crash*/
+	if (pFile == NULL)
+	{
+		perror ("Error opening file");
+		assert(!TRUE);
+	}
 	else
 	{
 		/*While still not the end of the file*/
 		while(fgets (translate, sizeof(translate) ,pFile) != !EOF)
 		{
 			/*Set the termination character as a last char*/
-			translate[WIDTH] = '\0';
 			/*While loop hasn't reached it yet*/
-			while (translate[i] != '\0')
+			while (i != WIDTH)
 			{
 				/*Assign current char into an appropriate array's adress*/
 				asciiTerminal[i][j] = translate[i];
@@ -85,7 +141,7 @@ void printLine(int whatLine)
 }
 /*End of printLine*/
 
-/*Syntax: moveAndPrint(where, what line)*/
+/*Syntax: moveAndPrint(what row, what line)*/
 void moveAndPrint(int where, int whatLine)
 {
 	move (where, 0);
@@ -117,7 +173,7 @@ void f_ejectAnimation(int from, char* direction)
 			j++;
 			wrefresh(stdscr);
 			/*Wait some time before printing next animation's step*/
-			Sleep (40);
+			Sleep (60);
 		}
 	}
 	else if (strcmp(direction, "up") == 0)
@@ -138,133 +194,154 @@ void f_ejectAnimation(int from, char* direction)
 			j++;
 			wrefresh(stdscr);
 			/*Wait some time before printing next animation's step*/
-			Sleep (40);
+			Sleep (33);
 		}
+	}
+	else
+	{
+		perror ("Invalid direction");
+		assert(!TRUE);
 	}
 }
 /*End of ejectAnimation*/
 
-/*Syntax: */
-int userLogin()
+/*Syntax: pushAnimation(to which line, in what direction)*/
+void f_pushAnimation(int to, char* direction)
 {
-	char prompt;
-
-	cleanMind();
-	while (1 == 1)
+	int j;
+	
+	if (strcmp(direction, "down") == 0)
 	{
-		/*TODO: Each time this loop begins, it should overwrite the line*/
-		/*TODO: Turn off terminal's history of entered values*/
-		printf("Username: ");
-		fgets (prompt , 20 , stdin);
-		/*If the player would like to exit the game without loggining in*/
-		if (strcmp(prompt, "exit") == 0)
-			{
-				break;
-			}
-		/*If the player would like to create a new account*/
-		if (strcmp(prompt, "create") == 0)
+		/*Do it till whole area will be covered with lines with white chars*/
+		for (j = 0; j <= to; j++)
 		{
-			createAccount();
-			continue;
-		}
-		/*If provided username do not exist*/
-		if (checkUsername(&prompt) == FALSE)
-		{
-			terminalPrint(i1,"Ivalid username, try again");
-			continue;
-		}
-		strcpy(username, prompt);
-		/*If provided username exist*/
-		while (1 == 1)
-		{
-			/*TODO: Each time this loop begins, it should overwrite the line*/
-			/*TODO: stars instead of visible password*/
-			printf("Password: ");
-			fgets (prompt , 20 , stdin);
-			if (strcmp(prompt, "exit") == 0)
-				{
-					break;
-				}
-			if (checkPassword(&prompt) == FALSE)
-			{
-				terminalPrint(i1,"Ivalid password, try again");
-				continue;
-			}
-			return 0;
-		}
+			moveAndPrint(j, 25);
+			/*Reload one animation step*/
+			wrefresh(stdscr);
+			/*Wait some time before printing next animation's step*/
+			Sleep (60);
+		}	
 	}
-	return EXIT;
-}
-/*End of userLogin*/
-
-/*Syntax: */
-int checkUsername(char* username)
-{
-	int found;
-
-	if (found == TRUE)
+	else if (strcmp(direction, "up") == 0)
 	{
-		return TRUE;
+		/*Do it till whole area will be covered with lines with white chars*/
+		for (j = 24; j >= to; j--)
+		{
+			moveAndPrint(j, 25);
+			/*Reload one animation step*/
+			wrefresh(stdscr);
+			/*Wait some time before printing next animation's step*/
+			Sleep (60);
+		}	
 	}
-	return FALSE;
-}
-/*End of checkUsername*/
-
-/*Syntax: */
-int checkPassword(char* username)
-{
-	int found;
-
-	if (found == TRUE)
+	else
 	{
-		return TRUE;
+		perror ("Invalid direction");
+		assert(!TRUE);
 	}
-	return FALSE;
 }
+/*End of pushAnimation*/
 
-/*Syntax: */
-void createAccount()
-{
-	/*TODO: Exclude the usage of words : exit, create*/
-	cleanMind();
-
-}
-/*End of createAccount*/
-
-/*Syntax: */
+/*Syntax: unlockInterface()*/
 void unlockInterface()
 {
-
+	/*Turn of visibility of the cursor until end of this animation*/
+	curs_set(0);
+	int row, i, k, z, j, m = 43;
+	
+	/*Move '=( @' till it reaches the last '-' char*/
+	for (i = 35; i >= 5; i--)
+	{
+		m++;
+		for (row = 1; row <= 15; row += 2)
+		{
+			k = 0;
+			/*4, because of (4+1) characters are moving(1 white char at the 
+			 end of every step)*/
+			for (z = 0; z <=4; z++)
+			{
+				if (z == 4)
+				{
+					asciiTerminal[i+k][row] = ' ';
+					asciiTerminal[m-k][row] = ' ';
+				}
+				else
+				{
+					asciiTerminal[i+k][row] = asciiTerminal[i+k+1][row];
+					asciiTerminal[m-k][row] = asciiTerminal[m-(k+1)][row];
+				}
+				k++;
+			}
+		}
+		/*Print those lines every step*/
+		for (j = 2; j <= 16; j += 2)
+		{
+			moveAndPrint(j,j);
+		}
+		wrefresh(stdscr);
+		Sleep (30);
+	}
+	/*Make the cursor visible again and set it onto default position*/
+	CUR;
+	curs_set(1);
 }
 /*End of unlockInterface*/
 
-/*This function will print things in the terminal*/
-/*Syntax: terminalPrint(place, "string");*/
-void f_terminalPrint(char *where, char *string)
-{
-	/*Hearing area*/
-	if (strcmp(where, "@") == 0)
-	{
-
-	}
-	/*First line of input center*/
-	if (strcmp(where, "i1") == 0)
-	{
-
-	}
-}
-/*End of f_terminalPrint1*/
-
-/*Syntax: cleanMind();*/
-void cleanMind()
-{
-
-}
-/*End of cleanMind*/
-
+/*Syntax: lockInterface()*/
 void lockInterface()
 {
-	cleanMind();
-
+	/*Turn of visibility of the cursor until end of this animation*/
+	curs_set(0);
+	int row, i, k, z, j, m = 75;
+	
+	/*Move '=( @' till it reaches the center*/
+	for (i = 5; i <= 35; i++)
+	{
+		m--;
+		for (row = 1; row <= 15; row += 2)
+		{
+			k = 4;
+			/*4, because of (4+1) characters are moving(1 '-' char at the 
+			 beginning of every step)*/
+			for (z = 0; z <= 4; z++)
+			{
+				if (z == 4)
+				{
+					asciiTerminal[i+k][row] = '-';
+					asciiTerminal[m-k][row] = '-';
+				}
+				else
+				{
+					asciiTerminal[i+k][row] = asciiTerminal[i+(k-1)][row];
+					asciiTerminal[m-k][row] = asciiTerminal[m-(k-1)][row];
+				}
+				k--;
+			}
+		}
+		/*Print those lines every step*/
+		for (j = 2; j <= 16; j += 2)
+		{
+			moveAndPrint(j,j);
+		}
+		wrefresh(stdscr);
+		Sleep (30);
+	}
+	pushAnimation(17, down);
+	pushAnimation(19, up);
+	
+	j = 80;
+	for (i = 0; i != j; i++)
+	{
+		move(18,i);
+		printw(" ");
+		move(18,j);
+		printw(" ");
+		wrefresh(stdscr);
+		j--;
+		Sleep (10);
+	}
+	move(18,40);
+	printw(" ");
+	wrefresh(stdscr);
 }
 /*End of lockInterface*/
