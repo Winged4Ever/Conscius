@@ -1,8 +1,9 @@
 #include <curses.h>
 #include "myhead.h"
-//#include <string.h>
+/*Include Sleep function*/
+#include <windows.h>
 
-/*Matrix is made of 80x24 characters + one '\n' on each of the line*/
+/*'Matrix' is made of 80x24 characters + one '\n' on each of the line*/
 char asciiTerminal[WIDTH][HEIGHT];
 char username;
 
@@ -17,27 +18,32 @@ int main()
 //		playGame(&username);
 //	}
 //	lockInterface(&asciiTerminal);
+	getch();
 	endwin();
 	return 0;
 }
 /*End of main*/
 
+/*Syntax: drawInterface()*/
 void drawInterface()
 {
 	arrayTheArt();
 	moveAndPrint(18, 18);
+	wrefresh(stdscr);
 	ejectAnimation(19, down);
 	ejectAnimation(17, up);
-	move(20,7);
+	/*TODO: Finish this function*/
+	move(20,6);
 }
 /*End of drawInterface*/
 
+/*Syntax: arrayTheArt()*/
 void arrayTheArt()
 {
 	/*Really don't know why it has to be 82, but in any other case it just 
 	 * doesn't work*/
-	static char translate[82];
-	static int i = 0, j = 0;
+	char translate[82];
+	int i = 0, j = 0;
 	
 	FILE *pFile = fopen ("asciiart.txt" , "r");
 	/*If file cannot be opened, show an error*/
@@ -66,62 +72,79 @@ void arrayTheArt()
 }
 /*End of arrayTheFile*/
 
-/*This function will print chosen line from loaded array*/
-void printLine(int curLine)
+/*Syntax: printLine(line from loaded array)*/
+void printLine(int whatLine)
 {
-	static int i = 0;
-	for (i; asciiTerminal[i][curLine] != '\n'; i++)
+	int i = 0;
+	
+	/*Loads to the buffer one chosen row from the array*/
+	for (i = 0; i <= 81; i++)
 	{
-		printw("%c",asciiTerminal[i][curLine]);
+		printw("%c",asciiTerminal[i][whatLine]);
 	}
 }
 /*End of printLine*/
 
 /*Syntax: moveAndPrint(where, what line)*/
-void moveAndPrint(int where, int what)
+void moveAndPrint(int where, int whatLine)
 {
 	move (where, 0);
-	printLine(what);
+	/*-1 cause of the fact that arrays begins from position 0*/
+	printLine(whatLine-1);
 }
 /*End of moveAndPrint*/
 
 /*Syntax: ejectAnimation(from which line, in what direction)*/
 void f_ejectAnimation(int from, char* direction)
 {
-	static int i = 0, z = 0, j = 0, counter = 0, linesLeft = 0;
+	int z = 0, j = 0, counter = 0, linesLeft = 0;
+	
 	if (strcmp(direction, "down") == 0)
 	{
 		linesLeft = (HEIGHT - from + 1);
-		for (counter; counter <= linesLeft; counter++)
+		
+		/*E.g. if 'from' = 17, the first printing step will print out in 17th
+		 row the content of 24th line, and on the next step - 17|23 and 18|24,
+		 and on the third step - 17|22, 18|23. 19|24, and so on, till it will
+		 reach the last terminal's row*/
+		for (counter = 0; counter < linesLeft; counter++)
 		{
-			for (z; z <= j; z++)
+			for (z = 0; z <= j; z++)
 			{
 				moveAndPrint((from + z), (HEIGHT - j + z));
 			}
 			z = 0;
 			j++;
 			wrefresh(stdscr);
-			SLEEP (100);
+			/*Wait some time before printing next animation's step*/
+			Sleep (40);
 		}
 	}
 	else if (strcmp(direction, "up") == 0)
 	{
 		linesLeft = from;
-		for (counter; counter <= linesLeft; counter++)
+		
+		/*E.g. if 'from' = 17, the first printing step will print out in 17th
+		 row the content of 1st line, and on the next step - 17|2 and 16|1,
+		 and on the third step - 17|3, 16|2. 15|3, and so on, till it will
+		 reach the first terminal's row*/
+		for (counter = 0; counter < linesLeft; counter++)
 		{
-			for (z; z <= j; z++)
+			for (z = 0; z <= j; z++)
 			{
 				moveAndPrint((from - z), (1 + j - z));
 			}
 			z = 0;
 			j++;
 			wrefresh(stdscr);
-			SLEEP (100);
+			/*Wait some time before printing next animation's step*/
+			Sleep (40);
 		}
 	}
 }
 /*End of ejectAnimation*/
 
+/*Syntax: */
 int userLogin()
 {
 	char prompt;
@@ -174,9 +197,10 @@ int userLogin()
 }
 /*End of userLogin*/
 
+/*Syntax: */
 int checkUsername(char* username)
 {
-	static int found;
+	int found;
 
 	if (found == TRUE)
 	{
@@ -186,9 +210,10 @@ int checkUsername(char* username)
 }
 /*End of checkUsername*/
 
+/*Syntax: */
 int checkPassword(char* username)
 {
-	static int found;
+	int found;
 
 	if (found == TRUE)
 	{
@@ -197,6 +222,7 @@ int checkPassword(char* username)
 	return FALSE;
 }
 
+/*Syntax: */
 void createAccount()
 {
 	/*TODO: Exclude the usage of words : exit, create*/
@@ -205,6 +231,7 @@ void createAccount()
 }
 /*End of createAccount*/
 
+/*Syntax: */
 void unlockInterface()
 {
 

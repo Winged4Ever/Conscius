@@ -5,7 +5,7 @@ void    drawInterface();
 void    arrayTheArt();
 void    printLine(int);
 void    moveAndPrint(int, int);
-void    f_ejectAnimation(int, char);
+void    f_ejectAnimation(int, char*);
 int     userLogin();
 int     checkUsername(char);
 int     checkPassword(char);
@@ -22,7 +22,6 @@ int     playGame(char);
 #define EXIT    2
 #define HEIGHT  24
 #define WIDTH   81
-#define SLEEP( milliseconds ) usleep( (unsigned long) (milliseconds * 1000.0) )
 
 extern char v_asciiTerminal[81][24];
 
