@@ -28,33 +28,68 @@ int main()
 /*Syntax: drawInterface()*/
 void drawInterface()
 {
+	/*Turn the visibility of the cursor for the animation time*/
 	curs_set(0);
 	neonAnimation(. . . LOADING . . ., 18);
 	Sleep (60);
 	arrayTheArt();
-	
-	int j = 80, i;
-	for (i = 0; i != j; i++)
-	{
-		move(18,i);
-		printw("%c",asciiTerminal[i][17]);
-		move(18,j);
-		printw("%c",asciiTerminal[j][17]);
-		wrefresh(stdscr);
-		j--;
-		Sleep (10);
-	}
-	move(18,40);
-	printw("%c",asciiTerminal[40][17]);
-	wrefresh(stdscr);
-	
+	invardLineSlide(18, print);
 	ejectAnimation(19, down);
 	Sleep (60);
 	ejectAnimation(17, up);
+	/*Set the cursor inside the commanding area*/
 	CUR;
 	curs_set(1);
 }
 /*End of drawInterface*/
+
+/*Syntax: invardLineSlide(line, print/clear)*/
+void f_invardLineSlide(int line, char* whattodo)
+{
+	int j = WIDTH-1, i;
+	
+	/*Will print chosen line from 'borders' of the line, inwards*/
+	if (strcmp(whattodo, "print") == 0)
+	{
+		for (i = 0; i != j; i++)
+		{
+			move(line,i);
+			printw("%c",asciiTerminal[i][line-1]);
+			move(line,j);
+			printw("%c",asciiTerminal[j][line-1]);
+			wrefresh(stdscr);
+			j--;
+			Sleep (10);
+		}
+		int center = WIDTH/2;
+		move(line, center);
+		printw("%c",asciiTerminal[center][line-1]);
+	}
+	/*Will clear chosen line from 'borders' of the line, inwards*/
+	else if (strcmp(whattodo, "clear") == 0)
+	{
+		for (i = 0; i != j; i++)
+		{
+			move(line,i);
+			printw(" ");
+			move(line,j);
+			printw(" ");
+			wrefresh(stdscr);
+			j--;
+			Sleep (10);
+		}
+		int center = WIDTH/2;
+		move(line,center);
+		printw(" ");
+	}
+	else
+	{
+		perror ("Invalid option");
+		assert(!TRUE);
+	}
+	wrefresh(stdscr);
+}
+/*End of invardLineSlide*/
 
 /*Syntax: neonAnimation(text, in what line)*/
 void f_neonAnimation(char* text, int line)
@@ -142,6 +177,8 @@ void printLine(int whatLine)
 /*End of printLine*/
 
 /*Syntax: moveAndPrint(what row, what line)*/
+/*This will print chosen line from preloaded asciiTerminal array into chosen
+ row in the terminal (but it will not refresh the window itself)*/
 void moveAndPrint(int where, int whatLine)
 {
 	move (where, 0);
@@ -197,6 +234,7 @@ void f_ejectAnimation(int from, char* direction)
 			Sleep (33);
 		}
 	}
+	/*If provided an unknown direction*/
 	else
 	{
 		perror ("Invalid direction");
@@ -234,6 +272,7 @@ void f_pushAnimation(int to, char* direction)
 			Sleep (60);
 		}	
 	}
+	/*If provided an unknown direction*/
 	else
 	{
 		perror ("Invalid direction");
@@ -245,7 +284,7 @@ void f_pushAnimation(int to, char* direction)
 /*Syntax: unlockInterface()*/
 void unlockInterface()
 {
-	/*Turn of visibility of the cursor until end of this animation*/
+	/*Turn off visibility of the cursor until end of this animation*/
 	curs_set(0);
 	int row, i, k, z, j, m = 43;
 	
@@ -290,7 +329,7 @@ void unlockInterface()
 /*Syntax: lockInterface()*/
 void lockInterface()
 {
-	/*Turn of visibility of the cursor until end of this animation*/
+	/*Turn off visibility of the cursor, this time permamently*/
 	curs_set(0);
 	int row, i, k, z, j, m = 75;
 	
@@ -298,6 +337,7 @@ void lockInterface()
 	for (i = 5; i <= 35; i++)
 	{
 		m--;
+		/*Do it for all rows*/
 		for (row = 1; row <= 15; row += 2)
 		{
 			k = 4;
@@ -323,25 +363,14 @@ void lockInterface()
 		{
 			moveAndPrint(j,j);
 		}
+		/*Reload buffer each step*/
 		wrefresh(stdscr);
 		Sleep (30);
 	}
+	/*Other closing animations*/
 	pushAnimation(17, down);
 	pushAnimation(19, up);
-	
-	j = 80;
-	for (i = 0; i != j; i++)
-	{
-		move(18,i);
-		printw(" ");
-		move(18,j);
-		printw(" ");
-		wrefresh(stdscr);
-		j--;
-		Sleep (10);
-	}
-	move(18,40);
-	printw(" ");
-	wrefresh(stdscr);
+	invardLineSlide(18, clear);
 }
 /*End of lockInterface*/
+

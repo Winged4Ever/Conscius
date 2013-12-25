@@ -1,7 +1,4 @@
 #include <curses.h>
-#include <stdlib.h>
-#include "myhead.h"
-#include <stdio.h>
 
 int main()
 {
@@ -12,3 +9,4 @@ int main()
 	endwin();
 	return 0;
 }
+
