@@ -8,7 +8,7 @@ int     stringLength(char*);
 void    arrayTheArt();
 void    printLine(int);
 void    printFrom(int, int, char*);
-void    printAndWriteFrom(int, int, char*);
+void    printAndWriteFrom(int, char*);
 void    moveAndPrint(int, int);
 void    f_ejectAnimation(int, char*);
 void    f_pushAnimation(int, char*);
@@ -16,16 +16,18 @@ void    unlockInterface();
 void    lockInterface();
 int     mainTerminal();
 int     userIdentify();
-void    readPassword(char*);
+int     readPassword(char*);
 void    clearTerminal();
 int     checkUsername(char*);
 int     checkPassword(char*);
 int     createAccount();
 void    showCommanderInfo(char*);
+void    clearLine(int);
 void    clearCommander();
 void    f_showHelp(char*);
 void    silenceOn();
 void    silenceOff();
+void    closeInterface();
 int     playGame();
 
 #define ejectAnimation(a,b)     f_ejectAnimation(a,#b)

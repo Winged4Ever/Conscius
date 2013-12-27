@@ -11,15 +11,15 @@ char username[20], pass[20];
 int main()
 {
 	initscr();
-	wresize(stdscr, 24, 80);
 	wclear(stdscr);
 	drawInterface();
 	if (mainTerminal() != EXIT)
 	{
 		unlockInterface();
 		playGame();
+		lockInterface();
 	}
-	lockInterface();
+	closeInterface();
 	endwin();
 	return 0;
 }
@@ -39,7 +39,7 @@ void drawInterface()
 	Sleep (60);
 	ejectAnimation(17, up);
 	/*Set the cursor inside the commanding area*/
-	printAndWriteFrom(20, 4, "> ");
+	printAndWriteFrom(20, "> ");
 	silenceOff();
 }
 /*End of drawInterface*/
@@ -189,86 +189,58 @@ void printLine(int whatLine)
 void printFrom(int row, int column, char* text)
 {
 	int i = 0, length = 0;
+
+	length = stringLength(text);
+	/*TODO: Temporary solution for too long strings, need to refine it*/
+	if (length > 70)
+	{
+		length = 70;
+	}
 	
-	/*If not provided 'clear' command*/
-	if (strcmp(text, "clear") != 0)
+	/*Let's first clear what has been written here*/
+	move(row, column);
+	for (i = 0; i <= WIDTH-1; i++)
 	{
-		length = stringLength(text);
-		/*TODO: Temporary solution for too long strings, need to refine it*/
-		if (length > 70)
-		{
-			length = 70;
-		}
-		
-		/*Let's first clear what has been written here*/
-		move(row, column);
-		for (i = 0; i <= WIDTH-1; i++)
-		{
-			printw("%c", asciiTerminal[column+i-1][row-1]);
-		}
-		
-		/*And now write what we wan't to write there*/
-		move(row, column);
-		for (i = 0; i <= length; i++)
-		{
-			printw("%c", text[i]);
-		}
+		printw("%c", asciiTerminal[column+i][row-1]);
 	}
-	/*If want only to clear the line from this point*/
-	else
+	
+	/*And now write what we wan't to write there*/
+	move(row, column);
+	for (i = 0; i <= length; i++)
 	{
-		move(row, column);
-		for (i = 0; i <= WIDTH-1; i++)
-		{
-			printw("%c", asciiTerminal[column+i-1][row-1]);
-		}
-		wrefresh(stdscr);
+		printw("%c", text[i]);
 	}
-	printAndWriteFrom(20, 4, "> ");
 }
 /*End of printFrom*/
 
-/*Syntax: printAndWriteFrom(20, 34, "clear"/"otherstring")*/
+/*Syntax: printAndWriteFrom(20, "string")*/
 /*This function additionally moves the cursor just behind the string*/
-void printAndWriteFrom(int row, int column, char* text)
+void printAndWriteFrom(int row, char* text)
 {
 	int i = 0, length = 0;
+
+	length = stringLength(text);
+	/*TODO: Temporary solution for too long strings, need to refine it*/
+	if (length > 70)
+	{
+		length = 70;
+	}
 	
-	/*If not provided 'clear' command*/
-	if (strcmp(text, "clear") != 0)
+	/*Let's first clear what has been written here*/
+	move(row, 4);
+	for (i = 0; i <= WIDTH-1; i++)
 	{
-		length = stringLength(text);
-		/*TODO: Temporary solution for too long strings, need to refine it*/
-		if (length > 70)
-		{
-			length = 70;
-		}
-		
-		/*Let's first clear what has been written here*/
-		move(row, column);
-		for (i = 0; i <= WIDTH-1; i++)
-		{
-			printw("%c", asciiTerminal[column+i-1][row-1]);
-		}
-		
-		/*And now write what we wan't to write there*/
-		move(row, column);
-		for (i = 0; i <= length; i++)
-		{
-			printw("%c", text[i]);
-		}
+		printw("%c", asciiTerminal[4+i][row-1]);
 	}
-	/*If want only to clear the line from this point*/
-	else
+	
+	/*And now write what we wan't to write there*/
+	move(row, 4);
+	for (i = 0; i <= length; i++)
 	{
-		move(row, column);
-		for (i = 0; i <= WIDTH-1; i++)
-		{
-			printw("%c", asciiTerminal[column+i-1][row-1]);
-		}
-		wrefresh(stdscr);
+		printw("%c", text[i]);
 	}
-	move(row,column + i);
+	move(row,4 + i);
+	wrefresh(stdscr);
 }
 /*End of printAndWriteFrom*/
 
@@ -417,7 +389,7 @@ void unlockInterface()
 		Sleep (30);
 	}
 	/*Make the cursor visible again and set it onto default position*/
-	printAndWriteFrom(20, 4, "> ");
+	printAndWriteFrom(20, "> ");
 	silenceOff();
 }
 /*End of unlockInterface*/
@@ -425,7 +397,6 @@ void unlockInterface()
 /*Syntax: lockInterface()*/
 void lockInterface()
 {
-	/*Turn off visibility of the cursor, this time permamently*/
 	silenceOn();
 	int row = 0, i = 0, k = 0, z = 0, j = 0, m = 75;
 	
@@ -463,10 +434,7 @@ void lockInterface()
 		wrefresh(stdscr);
 		Sleep (30);
 	}
-	/*Other closing animations*/
-	pushAnimation(17, down);
-	pushAnimation(19, up);
-	invardLineSlide(18, clear);
+	silenceOff();
 }
 /*End of lockInterface*/
 
@@ -474,16 +442,16 @@ void lockInterface()
 int mainTerminal()
 {	
 	char prompt[20];
-	memset (prompt, '\0', sizeof(prompt));
-	silenceOff();
+
 	while (1 == 1)
 	{
+		clearCommander();
 		/*Print info about help*/
 		printFrom(22, 6, "Type 'help' to display help entry");
-		wrefresh(stdscr);
+		printAndWriteFrom(20, "> ");
+		
 		/*Wait for input*/
 		getstr(prompt);
-
 		/*If the player would like to identify himself*/
 		if (strcmp(prompt, "identify") == 0)
 			{
@@ -527,25 +495,24 @@ int userIdentify()
 {
 	extern char username[20];
 	char prompt[20];
-	memset (prompt, '\0', sizeof(prompt));
+
+	clearCommander();
 
 	/*Username step*/
 	while (1 == 1)	
 	{
-		/*Print "Username: " just after > and then move cursor behind string*/
-		printAndWriteFrom(20, 6, "Username: ");
-		wrefresh(stdscr);
+		printFrom(22, 4, "Type 'exit' to break identifying process ");
+		printAndWriteFrom(20, "Username: ");
+		
 		/*Wait for input*/
 		getstr(prompt);
-		prompt[21] = '\n';
-		
 		/*If the player would like to exit the logging menu*/
 		if (strcmp(prompt, "exit") == 0)
 		{
 			break;
 		}
 		/*If provided username do not exist*/
-		if (checkUsername(prompt) == FALSE)
+		else if (checkUsername(prompt) == FALSE)
 		{
 			showCommanderInfo("Invalid username, try again");
 			continue;
@@ -561,13 +528,16 @@ int userIdentify()
 		}
 
 		/*Password step*/
+		memset (prompt, '\0', sizeof(prompt));
+		clearCommander();
 		while (1 == 1)
 		{
-			printAndWriteFrom(20, 6, "Password: ");
-			wrefresh(stdscr);
+			printAndWriteFrom(20, "Password: ");
+			
 			readPassword(prompt);
 			if (strcmp(prompt, "exit") == 0)
 			{
+				showCommanderInfo("Identifying has being canceled");
 				break;
 			}
 			if (checkPassword(prompt) == FALSE)
@@ -578,59 +548,72 @@ int userIdentify()
 			/*If player had successfully logged in*/
 			else
 			{
+				showCommanderInfo("Successfully logged in");
 				return TRUE;
 			}
 		}
 		break;
 	}
-	clearCommander();
 	return 0;
 }
 /*End of userIdentify*/
 
 /*Syntax: readPassword(&prompt)*/
-void readPassword(char* password)
+int readPassword(char* password)
 {
+	int x = 0, y = 0;
+	
 	/*Echo off, so no entered characters would be shown*/
 	noecho();
 	char c;
 	int i = 0;
 	
 	/*Password cannot be longer than 20 chars*/
-	for (i = 1; i <= 20; i++)
+	while (1 == 1)
 	{
 		/*Wait for input*/
-		c = getc(stdin);
+		c = getch();
 		/*If ENTER is being pressed*/
-		if (c == '\n')
+		if (c == 10)
 		{
+			i++;
 			break;
 		}
 		/*If BCKSPC is being pressed*/
 		else if (c == 8)
 		{
-			/*Delete last star*/
-			printw("\b ");
+			/*Check if not reached zero-pos char yet*/
+			if (i != 0)
+			{
+				/*Delete last star and back one step*/
+				printw("\b ");
+				getyx(curscr, y, x);
+				move(y, x-1);
+				i--;
+				password[i] = '\0';
+			}
 			continue;
 		}
 		/*If ESC is being pressed*/
 		else if (c == 27)
 		{
 			strcpy(password, "exit");
-			break;;
+			return FALSE;
 		}
 		/*If valid key is being pressed*/
 		else
 		{
 			/*Assign the pressed key as a part of entered password*/
-			password[i-1] = c;
+			password[i] = c;
 			/*Print on screen * instead of characters*/
 			printw("*");
+			i++;
 		}
 	}
 	password[i] = '\n';
 	/*Turn back echo on*/
 	echo();
+	return TRUE;
 }
 /*End of readPassword*/
 
@@ -666,27 +649,30 @@ int checkUsername(char* username)
 		perror ("Error opening file");
 		assert(!TRUE);
 	}
+	/*If successfully open the file*/
 	else
 	{
 		while(fgets (found, sizeof(found) ,pFile) != !EOF)
 		{
-			/*Till translating does not reached terminating char yet*/
-			for (i = 2; found[i] != '\n' || found[i] != '\0' ; i++)
+			for (i = 2; found[i] != '\n'; i++)
 			{
-				/*Pass the actual username string to the next string variable 
-				 * that will be checked*/
+				/*Translate to the actual username string (without "u ") so 
+				 * that it  could be checked later*/
 				check[i-2] = found[i];
 			}
+
 			/*If username match*/
 			if (strcmp(check, username) == 0)
 			{
 				/*Get to next line and capture what is the password to this
 				 account so it would be compared later while asking for pass*/
 				fgets (found, sizeof(found) ,pFile);
-				for (i = 2; found[i] != '\n' || found[i] != '\0' ; i++)
+				for (i = 2; found[i] != '\n' ; i++)
 				{
 					pass[i-2] = found[i];
 				}
+				/*End string with terminating character*/
+				pass[i-1] = '\n';
 				return TRUE;
 			}
 			else
@@ -695,11 +681,10 @@ int checkUsername(char* username)
 				fgets (found, sizeof(found) ,pFile);
 			}
 		}
-		/*When reached end of file and not found anything*/
-		return FALSE;
 	}
+	/*When reached end of file and not found anything*/
 	fclose (pFile);
-	return 0;
+	return FALSE;
 }
 /*End of checkUsername*/
 
@@ -722,60 +707,74 @@ int checkPassword(char* password)
 int createAccount()
 {
 	char prompt[20], temp_pass[20], temp_username[20];
-	memset (prompt, '\0', sizeof(prompt));
-	memset (temp_pass, '\0', sizeof(temp_pass));
-	memset (temp_username, '\0', sizeof(temp_username));
+	
+	clearCommander();
 	
 	while (1 == 1)
 	{
 		/*Username step*/
-		printFrom(20, 6, "Type your username");
-		printAndWriteFrom(21, 4, "> ");
+		printFrom(22, 4, "Type 'exit' to break identifying process ");
+		printAndWriteFrom(20, "Type your username: ");
 		
-		
+		getstr(prompt);	
+		/*If entered different string than exit*/
+		if (strcmp(prompt, "exit") != 0)
+		{
+			strcpy(temp_username, prompt);
+		}
+		/*If the player want to break account creation process */
+		else
+		{
+			break;
+		}
+				
 		/*Password step*/
+		clearCommander();
 		while (1 == 1)
 		{
-			printFrom(20, 6, "Type your password");
-			printFrom(21, 6, "Your password should be 4 - 20 characters long");
-			printAndWriteFrom(22, 4, "> ");
+			printFrom(22, 4, "Your password should be 4 - 20 characters long");
+			printAndWriteFrom(20, "Type your password: ");
+			
 			readPassword(prompt);
-			if (strcmp(prompt, "exit") == 0)
+			/*If the player haven't pressed ESC*/
+			if (strcmp(prompt, "exit") != 0)
 			{
 				while (1 == 1)
-					{
+				{
 					strcpy(temp_pass, prompt);
-					printFrom(20, 6, "Type your password again");
-					printFrom(22, 6, "clear");
-					printAndWriteFrom(21, 4, "> ");
+					clearLine(22);
+					printAndWriteFrom(20, "Type your password again: ");
 
+					/*Read password again in case of mistypes*/
 					readPassword(prompt);
+					/*If the player had pressed ESC*/
 					if (strcmp(prompt, "exit") == 0)
 					{
+						showCommanderInfo("Account creation has being canceled");
 						break;
 					}
 					/*If entered password match*/
-					if (strcmp(prompt, temp_pass) == 0)
+					else if (strcmp(prompt, temp_pass) == 0)
 					{
 						/*Will form those strings adequately to other lines in
 						 * accounts.dat*/
 						char u[20], p[20];
-						memset (u, '\0', sizeof(u));
-						memset (p, '\0', sizeof(p));
 						int i = 0;
+						
 						strcpy(u, "u ");
 						strcpy(p, "p ");
 						
-						for (i = 0; temp_username[i] != '\n'; i++)
+						for (i = 0; i <= stringLength(temp_username); i++)
 						{
 							u[i+2] = temp_username[i];
 						}
-						temp_username[i] = '\n';
-						for (i = 0; temp_pass[i] != '\n'; i++)
+						u[i+3] = '\n';
+						
+						for (i = 0; i <= stringLength(temp_pass); i++)
 						{
 							p[i+2] = temp_pass[i];
 						}
-						temp_pass[i] = '\n';
+						p[i+3] = '\n';
 						
 						/*Write at the end of file this data*/
 						FILE *pFile = fopen ("accounts.dat" , "a");
@@ -786,10 +785,18 @@ int createAccount()
 							perror ("Error opening file");
 							assert(!TRUE);
 						}
+						/*If successfully open the file*/
 						else
 						{
+							/*Jump to the next line*/
+							fputs("\n", pFile);
 							fputs(u, pFile);
+							/*Jump to the next line*/
+							fputs("\n", pFile);
 							fputs(p, pFile);
+							
+							showCommanderInfo("Account has been successfully "
+									"created");
 						}
 						fclose (pFile);
 						return 0;
@@ -802,7 +809,11 @@ int createAccount()
 					}
 				}
 			}
-			break;
+			else
+			{
+				showCommanderInfo("Account creation has being canceled");
+				break;
+			}
 		}
 		break;
 	}
@@ -815,7 +826,7 @@ void showCommanderInfo(char* whattoshow)
 {
 	silenceOn();
 	clearCommander();
-	printFrom(20, 6, whattoshow);
+	printFrom(20, 4, whattoshow);
 	wrefresh(stdscr);
 	getch();
 	clearCommander();
@@ -823,13 +834,27 @@ void showCommanderInfo(char* whattoshow)
 }
 /*End of showCommanderInfo*/
 
+/*Syntax: clearLine(line);*/
+void clearLine(int whichline)
+{
+	int i = 0;
+	
+	move(whichline, 0);
+	for (i = 0; i <= WIDTH-1; i++)
+	{
+		printw("%c", asciiTerminal[0+i][whichline-1]);
+	}
+	wrefresh(stdscr);
+}
+/*End of clearLine*/
+
 /*Syntax: clearCommander();*/
 /*This will clear only the commanding area*/
 void clearCommander()
 {
-	printFrom(20, 1, "clear");
-	printFrom(21, 1, "clear");
-	printFrom(22, 1, "clear");
+	clearLine(20);
+	clearLine(21);
+	clearLine(22);
 }
 /*End of clearCommander*/
 
@@ -854,7 +879,6 @@ void f_showHelp(char* aboutwhat)
 	}
 	/*Wait till key is being pressed*/
 	getch();
-	clearCommander();
 	silenceOff();
 
 }
@@ -876,12 +900,26 @@ void silenceOff()
 }
 /*End of silenceOff*/
 
+/*Syntax: closeInterface();*/
+void closeInterface()
+{
+	/*Turn off visibility of the cursor, this time permamently*/
+	silenceOn();
+	pushAnimation(17, down);
+	pushAnimation(19, up);
+	invardLineSlide(18, clear);
+}
+/*End of closeInterface*/
+
 /*Syntax: playGame()*/
 int playGame()
 {
 	noecho();
-	printFrom(20, 4, "You're playing the game as ");
+	printFrom(20, 4, "TEST: You've logged in as ");
 	printw("%s", username);
+	printFrom(21, 4, "This part of code is not completed yet, press any key "
+			"to exit ");
+	printFrom(22, 4, "That you for you time spent on testing this game ");
 	getch();
 	echo();
 	return 0;
