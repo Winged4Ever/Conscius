@@ -39,4 +39,7 @@ int     playGame();
 #define HEIGHT  25
 #define WIDTH   81
 
+extern char asciiTerminal[WIDTH][HEIGHT];
+extern char username[20], pass[20];
+
 #endif
