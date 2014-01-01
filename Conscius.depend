@@ -1,0 +1,71 @@
+# depslib dependency file v1.0
+1388608266 source:g:\coding\conscius\corefunctions.c
+	<curses.h>
+	"myhead.h"
+	<windows.h>
+	<assert.h>
+
+1003258996 g:\mingw\pdcurses\curses.h
+	<bios.h>
+	<dos.h>
+	<os2.h>
+	<windows.h>
+	<bios.h>
+	<dos.h>
+	<os2.h>
+	<windows.h>
+	<bios.h>
+	<dos.h>
+	<bios.h>
+	<dos.h>
+	<os2.h>
+	<os2.h>
+	<stdlib.h>
+	<sys/video.h>
+	<os2.h>
+	<dos.h>
+	<windows.h>
+	<windows.h>
+	<windows.h>
+	<bios.h>
+	<dos.h>
+	<i86.h>
+	<os2.h>
+	<windows.h>
+	<bios.h>
+	<stdio.h>
+	<curspriv.h>
+	<stdlib.h>
+
+1388608297 g:\coding\conscius\myhead.h
+
+1388601754 source:g:\coding\conscius\interface.c
+	<curses.h>
+	"myhead.h"
+	<windows.h>
+	<assert.h>
+
+1388607825 source:g:\coding\conscius\main.c
+	<curses.h>
+	"myhead.h"
+	<windows.h>
+	<assert.h>
+
+1388607733 source:g:\coding\conscius\playgame.c
+	<curses.h>
+	"myhead.h"
+	<windows.h>
+	<assert.h>
+
+1216120406 g:\mingw\pdcurs34\curses.h
+	<stdarg.h>
+	<stddef.h>
+	<stdio.h>
+	<wchar.h>
+
+1388352404 source:g:\coding\conscius\knowledge.c
+	<curses.h>
+	"myhead.h"
+	<windows.h>
+	<assert.h>
+

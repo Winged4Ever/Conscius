@@ -1,3 +1,8 @@
+/*
+ * File:   myhead.h
+ * Author: Martin Winged
+ */
+
 #ifndef MYHEAD_H_
 #define MYHEAD_H_
 
@@ -29,17 +34,23 @@ void    silenceOn();
 void    silenceOff();
 void    closeInterface();
 int     playGame();
+void    f_displaySense(char*, char*);
 
 #define ejectAnimation(a,b)     f_ejectAnimation(a,#b)
 #define pushAnimation(a,b)      f_pushAnimation(a,#b)
-#define invardLineSlide(a,b)    f_invardLineSlide(a,#b) 
+#define invardLineSlide(a,b)    f_invardLineSlide(a,#b)
 #define showHelp(a)             f_showHelp(#a)
+#define displaySense(a,b)       f_displaySense(#a, b)
 
-#define EXIT    2
-#define HEIGHT  25
-#define WIDTH   81
+#define EXIT        2
+#define HEIGHT      25
+#define WIDTH       80
+#define TSPEED      5
+#define AHORSPEED   20
+#define AVERSPEED   50
 
 extern char asciiTerminal[WIDTH][HEIGHT];
 extern char username[20], pass[20];
+extern int curX, curY;
 
 #endif

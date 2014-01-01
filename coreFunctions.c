@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   coreFunctions.c
  * Author: Martin Winged
  */
@@ -7,6 +7,8 @@
 #include "myhead.h"
 #include <windows.h>
 #include <assert.h>
+
+int curX, curY;
 
 /*Syntax: stringLength(var/"abc")*/
 /*Measures provided string's length*/
@@ -25,18 +27,17 @@ int stringLength(char* text)
 /*Translates file (for now only "asciiart.txt" into array*/
 void arrayTheArt()
 {
-	/*Really don't know why it has to be 82, but in any other case it just 
+	/*Really don't know why it has to be 82, but in any other case it just
 	 * doesn't work*/
 	char translate[82];
-	
+
 	int i = 0, j = 0;
-	
+
 	FILE *pFile = fopen ("asciiart.txt" , "r");
 	/*If file cannot be opened, show an error and then crash*/
 	if (pFile == NULL)
 	{
-		perror ("Error opening file");
-		assert(!TRUE);
+
 	}
 	else
 	{
@@ -66,7 +67,7 @@ void arrayTheArt()
 void printLine(int whatLine)
 {
 	int i = 0;
-	
+
 	/*Loads to the buffer one chosen row from the array*/
 	for (i = 0; i <= 81; i++)
 	{
@@ -76,31 +77,30 @@ void printLine(int whatLine)
 /*End of printLine*/
 
 /*Syntax: printFrom(20, 34, "clear"/"otherstring")*/
-/*Same as mvprintw();*/
+/*Same as mvprintw(); but in addition, it prints the background array too*/
 void printFrom(int row, int column, char* text)
 {
 	int i = 0, length = 0;
 
 	length = stringLength(text);
-	/*TODO: Temporary solution for too long strings, need to refine it*/
-	if (length > 70)
-	{
-		length = 70;
-	}
-	
+
 	/*Let's first clear what has been written here*/
 	move(row, column);
-	for (i = 0; i <= WIDTH-1; i++)
+	for (i = 0; i <= WIDTH; i++)
 	{
 		printw("%c", asciiTerminal[column+i][row-1]);
 	}
-	
+
 	/*And now write what we wan't to write there*/
 	move(row, column);
 	for (i = 0; i <= length; i++)
 	{
 		printw("%c", text[i]);
+		wrefresh(stdscr);
+		Sleep (TSPEED);
 	}
+	/*Move the cursor back to the place where it was*/
+	move (curY, curX);
 }
 /*End of printFrom*/
 
@@ -117,27 +117,30 @@ void printAndWriteFrom(int row, char* text)
 	{
 		length = 70;
 	}
-	
+
 	/*Let's first clear what has been written here*/
 	move(row, 4);
-	for (i = 0; i <= WIDTH-1; i++)
+	for (i = 0; i <= WIDTH; i++)
 	{
 		printw("%c", asciiTerminal[4+i][row-1]);
 	}
-	
+
 	/*And now write what we wan't to write there*/
 	move(row, 4);
 	for (i = 0; i <= length; i++)
 	{
-		printw("%c", text[i]);
+        printw("%c", text[i]);
+		wrefresh(stdscr);
+		Sleep (TSPEED);
 	}
-	move(row,4 + i);
-	wrefresh(stdscr);
+    /*Storage the cursor's position in order to make printFrom place the cursor
+    in the right place*/
+	move(row,4 + i-1);
+	getyx(curscr, curY, curX);
 }
 /*End of printAndWriteFrom*/
 
 /*Syntax: moveAndPrint(what row, what line)*/
-/*Move to chosen line, than print chosen line from asciiTerminal*/
 /*This will print chosen line from preloaded asciiTerminal array into chosen
  row in the terminal (but it will not refresh the window itself)*/
 void moveAndPrint(int where, int whatLine)
@@ -149,17 +152,17 @@ void moveAndPrint(int where, int whatLine)
 /*End of moveAndPrint*/
 
 /*Syntax: readPassword(&prompt)*/
-/*It reads user's input and save it to 'pass' variable while showing only 
+/*It reads user's input and save it to 'pass' variable while showing only
  * star symbols*/
 int readPassword(char* password)
 {
 	int x = 0, y = 0;
-	
+
 	/*Echo off, so no entered characters would be shown*/
 	noecho();
 	char c;
 	int i = 0;
-	
+
 	/*Password cannot be longer than 20 chars*/
 	while (1 == 1)
 	{
@@ -213,28 +216,124 @@ int readPassword(char* password)
 /*It clears whole terminal (prints background interface)*/
 void clearTerminal()
 {
-	int i = 0, j = 0;
-	
-	for (j = 0; j <= 23; j++)
+	int whichLine = 0;
+
+    silenceOn();
+	for (whichLine = 0; whichLine <= 23; whichLine++)
 	{
-		for (i = 0; i <= 80; i++)
-		{
-			printw("%c",asciiTerminal[i][j]);
-		}
+        clearLine(whichLine);
 		wrefresh(stdscr);
-		Sleep (60);
+		Sleep (AHORSPEED);
 	}
+	silenceOff();
 }
 /*End of clearTerminal*/
 
 /*Syntax: showCommanderInfo("Your fot size don't match");*/
 /*It shows provided message clearing whole commanding area and then printing it
  *there*/
-void showCommanderInfo(char* whattoshow)
+void showCommanderInfo(char* textToShow)
 {
 	silenceOn();
 	clearCommander();
-	printFrom(20, 4, whattoshow);
+	int length;
+	length = stringLength(textToShow);
+
+    /*Make sure the text will fit in 3 lines*/
+    if (length > 210)
+    {
+		perror ("The string is to long to display");
+		assert(!TRUE);
+    }
+    /*If the string will fit in one line*/
+	if (length <= 70)
+    {
+        printFrom(20, 4, textToShow);
+    }
+    /*If the string won't fit in one line*/
+    else
+    {
+        int iS = 0, iP = 0, line = 20;
+        char textToPrint[70];
+        /*Copy 70 chars into another string in order to print it later*/
+        while (iS <= 69)
+        {
+            textToPrint[iP] = textToShow[iS];
+            iS++;
+            iP++;
+        }
+        /*In order to not cut words into pieces*/
+        /*If the next char would NOT be a white char*/
+        while (textToShow[iS] != ' ')
+        {
+            /*Head back till it will reach white char*/
+            textToPrint[iP] = '\0';
+            iP--;
+            iS--;
+            assert(iP > 0);
+        }
+        printFrom(line, 4, textToPrint);
+        line++;
+        /*If the string won't fit in two lines*/
+        if (length > 140)
+        {
+            iP = 0;
+            /*Beginning from current char (i), copy 70 chars into another string
+            in order to print it later*/
+            while (iS <= 139)
+            {
+                textToPrint[iP] = textToShow[iS];
+                iP++;
+                iS++;
+            }
+            /*In order to not cut words into pieces*/
+            /*If the next char would NOT be a white char*/
+            while (textToShow[iS] != ' ')
+            {
+                /*Head back till it will reach white char*/
+                textToPrint[iP] = '\0';
+                iP--;
+                iS--;
+                assert(iP > 0);
+            }
+            printFrom(line, 4, textToPrint);
+            line++;
+            iP = 0;
+            /*Print remaining text, skip white char*/
+            while (iS + 1 <= length)
+            {
+                /*If the text would not even than, print what can be printed*/
+                if (iP > 69)
+                {
+                    textToPrint[69] = '/';
+                    break;
+                }
+                textToPrint[iP] = textToShow[iS + 1];
+                iS++;
+                iP++;
+            }
+            printFrom(line, 4, textToPrint);
+        }
+        /*If the string will fit in two lines*/
+        else
+        {
+            iP = 0;
+            /*Print remaining text, skip white char*/
+            while (iS + 1 <= length)
+            {
+                /*If the text would not even than, print what can be printed*/
+                if (iP > 69)
+                {
+                    textToPrint[69] = '/';
+                    break;
+                }
+                textToPrint[iP] = textToShow[iS + 1];
+                iS++;
+                iP++;
+            }
+            printFrom(line, 4, textToPrint);
+        }
+    }
 	wrefresh(stdscr);
 	getch();
 	clearCommander();
@@ -244,14 +343,14 @@ void showCommanderInfo(char* whattoshow)
 
 /*Syntax: clearLine(line);*/
 /*Clears line by printing background array on top of everything*/
-void clearLine(int whichline)
+void clearLine(int whichLine)
 {
 	int i = 0;
-	
-	move(whichline, 0);
-	for (i = 0; i <= WIDTH-1; i++)
+
+	move(whichLine, 0);
+	for (i = 0; i <= WIDTH; i++)
 	{
-		printw("%c", asciiTerminal[0+i][whichline-1]);
+		printw("%c", asciiTerminal[0+i][whichLine-1]);
 	}
 	wrefresh(stdscr);
 }
@@ -300,3 +399,106 @@ int checkPassword(char* password)
 	}
 	return 0;
 }
+
+/*Syntax: displaySense(hearing, "Something is scratching the doors behind me")*/
+/*This function is similar to showCommanderInfo, but rewritten to fit senses
+ *lines*/
+void f_displaySense(char* whatSense, char* textToShow)
+{
+	silenceOn();
+	int length, whatLine;
+	length = stringLength(textToShow);
+
+    if (strcmp(whatSense, "hearing") == 0)
+    {
+        whatLine = 2;
+    }
+    else if (strcmp(whatSense, "sight") == 0)
+    {
+        whatLine = 4;
+    }
+    else if (strcmp(whatSense, "pain") == 0)
+    {
+        whatLine = 6;
+    }
+    else if (strcmp(whatSense, "smell") == 0)
+    {
+        whatLine = 8;
+    }
+    else if (strcmp(whatSense, "balance") == 0)
+    {
+        whatLine = 10;
+    }
+    else if (strcmp(whatSense, "touch") == 0)
+    {
+        whatLine = 12;
+    }
+    else if (strcmp(whatSense, "taste") == 0)
+    {
+        whatLine = 14;
+    }
+    else if (strcmp(whatSense, "other") == 0)
+    {
+        whatLine = 16;
+    }
+    /*If mistyped the sense*/
+    else
+    {
+		perror ("Provided sense is not in senses speck");
+		assert(!TRUE);
+    }
+
+    /*Make sure the text will fit in 2 lines*/
+    if (length > 120)
+    {
+		perror ("The string is to long to display");
+		assert(!TRUE);
+    }
+    /*If the string will fit in one line*/
+	if (length <= 60)
+    {
+        printFrom(whatLine, 10, textToShow);
+    }
+    /*If the string won't fit in one line*/
+    else
+    {
+        int iS = 0, iP = 0;
+        char textToPrint[60];
+        /*Copy 60 chars into another string in order to print it later*/
+        while (iS <= 59)
+        {
+            textToPrint[iP] = textToShow[iS];
+            iS++;
+            iP++;
+        }
+        /*In order to not cut words into pieces*/
+        /*If the next char would NOT be a white char*/
+        while (textToShow[iS] != ' ')
+        {
+            /*Head back till it will reach white char*/
+            textToPrint[iP] = '\0';
+            iP--;
+            iS--;
+            assert(iP > 0);
+        }
+        printFrom(whatLine, 10, textToPrint);
+        whatLine++;
+        iP = 0;
+        /*Print remaining text, skip white char*/
+        while (iS + 1 <= length)
+        {
+            /*If the text would not even than, print what can be printed*/
+            if (iP > 59)
+            {
+                textToPrint[59] = '/';
+                break;
+            }
+            textToPrint[iP] = textToShow[iS + 1];
+            iS++;
+            iP++;
+        }
+        printFrom(whatLine, 10, textToPrint);
+    }
+	silenceOff();
+}
+/*End of f_displaySense*/

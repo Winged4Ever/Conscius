@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   main.c
  * Author: Winged
  *
@@ -18,6 +18,7 @@ int main()
 	{
 		unlockInterface();
 		playGame();
+		clearTerminal();
 		lockInterface();
 	}
 	closeInterface();

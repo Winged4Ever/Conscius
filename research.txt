@@ -15,31 +15,30 @@
 	|-> Other senses e.g. reflex, weight
 	|-> The sixth sense
 
-+----------------------------------------------------------------------------------------------+
++--------------------------------------------------+
 
-|Structure of objects:									 Which sense one can use to examine it?
+|Structure of objects:
 
-	|-> Odor-------------------------------------------- smell
-	|-> Taste------------------------------------------- taste
-	|-> Shape------------------------------------------- sight, touch
-		|-> Motion-------------------------------------- sight, motion/acceleration
-	|-> Condition--------------------------------------- sight, smell, taste, hearing
+	|-> Odor
+	|-> Taste
+	|-> Shape
+		|-> Motion
+	|-> Condition
 		|-> Odor
 		|-> Taste
-		|-> Sound made when collided with something----- hearing
+		|-> Sound made when collided with something
 		|-> Toughness
-			|-> Weight---------------------------------- weight
-	|-> Size-------------------------------------------- sight, touch, hearing
+			|-> Weight
+	|-> Size
 		|-> Weight
-	|->Material----------------------------------------- sight, hearing, smell, taste, touch
-		|-> Hardness------------------------------------ sight
+	|->Material
+		|-> Hardness
 			|-> Toughness
-		|-> Displacement-------------------------------- touch, sight
+		|-> Displacement
 		|-> Debris shape
-		|-> Temperature--------------------------------- touch
+		|-> Temperature
 		|-> Weight
 		|-> Sound made when collided with something
-	|-> Fill(??)---------------------------------------- touch, sight, smell, taste
+	|-> Fill(??)
 	|-> Position in space
 	|-> Widespread and common knowledge about it
-	

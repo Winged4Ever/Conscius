@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   main.c
  * Author: Martin Winged
  */
@@ -19,12 +19,12 @@ void drawInterface()
 	/*Turn the visibility of the cursor for the animation time*/
 	silenceOn();
 	neonAnimation(". . . LOADING . . .", 18);
-	Sleep (60);
+	Sleep (AVERSPEED);
 	arrayTheArt();
 	invardLineSlide(18, print);
-	Sleep (60);
+	Sleep (AVERSPEED);
 	ejectAnimation(19, down);
-	Sleep (60);
+	Sleep (AVERSPEED);
 	ejectAnimation(17, up);
 	/*Set the cursor inside the commanding area*/
 	printAndWriteFrom(20, "> ");
@@ -34,12 +34,12 @@ void drawInterface()
 
 /*Syntax: invardLineSlide(line, print/clear)*/
 /*Stylish animation of one line*/
-void f_invardLineSlide(int line, char* whattodo)
+void f_invardLineSlide(int line, char* whatToDo)
 {
-	int j = WIDTH-1, i;
-	
+	int j = WIDTH, i;
+
 	/*Will print chosen line from 'borders' of the line, inwards*/
-	if (strcmp(whattodo, "print") == 0)
+	if (strcmp(whatToDo, "print") == 0)
 	{
 		for (i = 0; i != j; i++)
 		{
@@ -49,14 +49,14 @@ void f_invardLineSlide(int line, char* whattodo)
 			printw("%c",asciiTerminal[j][line-1]);
 			wrefresh(stdscr);
 			j--;
-			Sleep (10);
+			Sleep (AHORSPEED);
 		}
 		int center = WIDTH/2;
 		move(line, center);
 		printw("%c",asciiTerminal[center][line-1]);
 	}
 	/*Will clear chosen line from 'borders' of the line, inwards*/
-	else if (strcmp(whattodo, "clear") == 0)
+	else if (strcmp(whatToDo, "clear") == 0)
 	{
 		for (i = 0; i != j; i++)
 		{
@@ -66,7 +66,7 @@ void f_invardLineSlide(int line, char* whattodo)
 			printw(" ");
 			wrefresh(stdscr);
 			j--;
-			Sleep (10);
+			Sleep (AHORSPEED);
 		}
 		int center = WIDTH/2;
 		move(line,center);
@@ -86,27 +86,27 @@ void f_invardLineSlide(int line, char* whattodo)
 void neonAnimation(char* text, int line)
 {
 	int i = 0, origin = 0, length = 0;
-	
+
 	length = stringLength(text);
 	origin = 40 - (length/2);
-	
+
 	/*Print it on the center of chosen line*/
 	for (i = 0; i <= length; i++)
 	{
 		move(line, origin+i);
 		printw("%c", text[i]);
 		wrefresh(stdscr);
-		Sleep (40);
+		Sleep (AVERSPEED);
 	}
 	i = 0;
-	
+
 	/*De-print it*/
 	for (i = 0; i <= length; i++)
 	{
 		move(line, origin+i);
 		printw(" ");
 		wrefresh(stdscr);
-		Sleep (40);
+		Sleep (AVERSPEED);
 	}
 }
 /*End of neonAnimation*/
@@ -116,11 +116,11 @@ void neonAnimation(char* text, int line)
 void f_ejectAnimation(int from, char* direction)
 {
 	int z = 0, j = 0, counter = 0, linesLeft = 0;
-	
+
 	if (strcmp(direction, "down") == 0)
 	{
 		linesLeft = (HEIGHT - from + 1);
-		
+
 		/*E.g. if 'from' = 17, the first printing step will print out in 17th
 		 row the content of 24th line, and on the next step - 17|23 and 18|24,
 		 and on the third step - 17|22, 18|23. 19|24, and so on, till it will
@@ -135,13 +135,13 @@ void f_ejectAnimation(int from, char* direction)
 			j++;
 			wrefresh(stdscr);
 			/*Wait some time before printing next animation's step*/
-			Sleep (60);
+			Sleep (AVERSPEED);
 		}
 	}
 	else if (strcmp(direction, "up") == 0)
 	{
 		linesLeft = from;
-		
+
 		/*E.g. if 'from' = 17, the first printing step will print out in 17th
 		 row the content of 1st line, and on the next step - 17|2 and 16|1,
 		 and on the third step - 17|3, 16|2. 15|3, and so on, till it will
@@ -156,7 +156,7 @@ void f_ejectAnimation(int from, char* direction)
 			j++;
 			wrefresh(stdscr);
 			/*Wait some time before printing next animation's step*/
-			Sleep (33);
+			Sleep (AVERSPEED);
 		}
 	}
 	/*If provided an unknown direction*/
@@ -173,7 +173,7 @@ void f_ejectAnimation(int from, char* direction)
 void f_pushAnimation(int to, char* direction)
 {
 	int j = 0;
-	
+
 	if (strcmp(direction, "down") == 0)
 	{
 		/*Do it till whole area will be covered with lines with white chars*/
@@ -183,8 +183,8 @@ void f_pushAnimation(int to, char* direction)
 			/*Reload one animation step*/
 			wrefresh(stdscr);
 			/*Wait some time before printing next animation's step*/
-			Sleep (60);
-		}	
+			Sleep (AVERSPEED);
+		}
 	}
 	else if (strcmp(direction, "up") == 0)
 	{
@@ -195,8 +195,8 @@ void f_pushAnimation(int to, char* direction)
 			/*Reload one animation step*/
 			wrefresh(stdscr);
 			/*Wait some time before printing next animation's step*/
-			Sleep (60);
-		}	
+			Sleep (AVERSPEED);
+		}
 	}
 	/*If provided an unknown direction*/
 	else
@@ -214,7 +214,7 @@ void unlockInterface()
 	/*Turn off visibility of the cursor until end of this animation*/
 	silenceOn();
 	int row = 0, i = 0, k = 0, z = 0, j = 0, m = 43;
-	
+
 	/*Move '=( @' till it reaches the last '-' char*/
 	for (i = 35; i >= 5; i--)
 	{
@@ -222,7 +222,7 @@ void unlockInterface()
 		for (row = 1; row <= 15; row += 2)
 		{
 			k = 0;
-			/*4, because of (4+1) characters are moving(1 white char at the 
+			/*4, because of (4+1) characters are moving(1 white char at the
 			 end of every step)*/
 			for (z = 0; z <=4; z++)
 			{
@@ -245,7 +245,7 @@ void unlockInterface()
 			moveAndPrint(j,j);
 		}
 		wrefresh(stdscr);
-		Sleep (30);
+		Sleep (AHORSPEED);
 	}
 	/*Make the cursor visible again and set it onto default position*/
 	printAndWriteFrom(20, "> ");
@@ -259,7 +259,7 @@ void lockInterface()
 {
 	silenceOn();
 	int row = 0, i = 0, k = 0, z = 0, j = 0, m = 75;
-	
+
 	/*Move '=( @' till it reaches the center*/
 	for (i = 5; i <= 35; i++)
 	{
@@ -268,7 +268,7 @@ void lockInterface()
 		for (row = 1; row <= 15; row += 2)
 		{
 			k = 4;
-			/*4, because of (4+1) characters are moving(1 '-' char at the 
+			/*4, because of (4+1) characters are moving(1 '-' char at the
 			 beginning of every step)*/
 			for (z = 0; z <= 4; z++)
 			{
@@ -292,7 +292,7 @@ void lockInterface()
 		}
 		/*Reload buffer each step*/
 		wrefresh(stdscr);
-		Sleep (30);
+		Sleep (AHORSPEED);
 	}
 	silenceOff();
 }
@@ -301,18 +301,18 @@ void lockInterface()
 /*Syntax: mainTerminal()*/
 /*Menu phase of command-receiving mechanism*/
 int mainTerminal()
-{	
+{
 	char prompt[20];
 
 	while (1 == 1)
 	{
 		clearCommander();
 		/*Print info about help*/
+        printAndWriteFrom(20, "> ");
 		printFrom(22, 6, "Type 'help' to display help entry");
-		printAndWriteFrom(20, "> ");
-		
+
 		/*Wait for input*/
-		fflush(stdin);
+		flushinp();
 		getstr(prompt);
 		/*If the player would like to identify himself*/
 		if (strcmp(prompt, "identify") == 0)
@@ -362,11 +362,10 @@ int userIdentify()
 	clearCommander();
 
 	/*Username step*/
-	while (1 == 1)	
+	while (1 == 1)
 	{
-		printFrom(22, 4, "Type 'exit' to break identifying process ");
 		printAndWriteFrom(20, "Username: ");
-		
+		printFrom(22, 4, "Type 'exit' to break identifying process ");
 		/*Wait for input*/
 		getstr(prompt);
 		/*If the player would like to exit the logging menu*/
@@ -396,7 +395,7 @@ int userIdentify()
 		while (1 == 1)
 		{
 			printAndWriteFrom(20, "Password: ");
-			
+
 			readPassword(prompt);
 			if (strcmp(prompt, "exit") == 0)
 			{
@@ -430,7 +429,7 @@ int checkUsername(char* username)
 	memset (found, '\0', sizeof(found));
 	memset (check, '\0', sizeof(check));
 	int i = 0;
-	
+
 	FILE *pFile = fopen ("accounts.dat" , "r");
 	/*If file cannot be opened, show an error and then crash*/
 	if (pFile == NULL)
@@ -445,7 +444,7 @@ int checkUsername(char* username)
 		{
 			for (i = 2; found[i] != '\n'; i++)
 			{
-				/*Translate to the actual username string (without "u ") so 
+				/*Translate to the actual username string (without "u ") so
 				 * that it  could be checked later*/
 				check[i-2] = found[i];
 			}
@@ -482,16 +481,16 @@ int checkUsername(char* username)
 int createAccount()
 {
 	char prompt[20], temp_pass[20], temp_username[20];
-	
+
 	clearCommander();
-	
+
 	while (1 == 1)
 	{
 		/*Username step*/
+        printAndWriteFrom(20, "Type your username: ");
 		printFrom(22, 4, "Type 'exit' to break identifying process ");
-		printAndWriteFrom(20, "Type your username: ");
-		
-		getstr(prompt);	
+
+		getstr(prompt);
 		/*If entered different string than exit*/
 		if (strcmp(prompt, "exit") != 0)
 		{
@@ -502,14 +501,14 @@ int createAccount()
 		{
 			break;
 		}
-				
+
 		/*Password step*/
 		clearCommander();
 		while (1 == 1)
 		{
+            printAndWriteFrom(20, "Type your password: ");
 			printFrom(22, 4, "Your password should be 4 - 20 characters long");
-			printAndWriteFrom(20, "Type your password: ");
-			
+
 			readPassword(prompt);
 			/*If the player haven't pressed ESC*/
 			if (strcmp(prompt, "exit") != 0)
@@ -535,25 +534,25 @@ int createAccount()
 						 * accounts.dat*/
 						char u[20], p[20];
 						int i = 0;
-						
+
 						strcpy(u, "u ");
 						strcpy(p, "p ");
-						
+
 						for (i = 0; i <= stringLength(temp_username); i++)
 						{
 							u[i+2] = temp_username[i];
 						}
 						u[i+3] = '\n';
-						
+
 						for (i = 0; i <= stringLength(temp_pass); i++)
 						{
 							p[i+2] = temp_pass[i];
 						}
 						p[i+3] = '\n';
-						
+
 						/*Write at the end of file this data*/
 						FILE *pFile = fopen ("accounts.dat" , "a");
-						/*If file cannot be opened, show an error and then 
+						/*If file cannot be opened, show an error and then
 						 * crash*/
 						if (pFile == NULL)
 						{
@@ -569,7 +568,7 @@ int createAccount()
 							/*Jump to the next line*/
 							fputs("\n", pFile);
 							fputs(p, pFile);
-							
+
 							showCommanderInfo("Account has been successfully "
 									"created");
 						}
@@ -596,14 +595,14 @@ int createAccount()
 }
 /*End of createAccount*/
 
-/*Syntax showHelp(aboutwhat)*/
+/*Syntax showHelp(aboutWhat)*/
 /*It shows help info about chosen part of program*/
-void f_showHelp(char* aboutwhat)
+void f_showHelp(char* aboutWhat)
 {
 	silenceOn();
 	clearCommander();
 	/*If called from mainTerminal function*/
-	if (strcmp(aboutwhat, "mainTerminal") == 0)
+	if (strcmp(aboutWhat, "mainTerminal") == 0)
 	{
 		printFrom(20, 4, "Type 'identify' to login into your existing account");
 		printFrom(21, 4, "Type 'create' to create a new account");

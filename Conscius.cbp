@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Conscius" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Conscius" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Conscius" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="G:/MinGW/pdcurs34" />
+			<Add directory="G:/MinGW/pdcurs34/win32" />
+		</Compiler>
+		<ResourceCompiler>
+			<Add directory="G:/MinGW/pdcurs34/win32" />
+			<Add directory="G:/MinGW/pdcurs34" />
+		</ResourceCompiler>
+		<Linker>
+			<Add library="G:\MinGW\pdcurs34\win32\pdcurses.a" />
+			<Add directory="G:/MinGW/pdcurs34/win32" />
+			<Add directory="G:/MinGW/pdcurs34" />
+		</Linker>
+		<Unit filename="README.txt" />
+		<Unit filename="accounts.dat" />
+		<Unit filename="asciiart.txt" />
+		<Unit filename="coreFunctions.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ideas.txt" />
+		<Unit filename="interface.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="knowledge.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="myhead.h" />
+		<Unit filename="playGame.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="research.txt" />
+		<Unit filename="scenario.txt" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

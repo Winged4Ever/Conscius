@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   playGame.c
  * Author: Martin Winged
  */
@@ -8,19 +8,12 @@
 #include <windows.h>
 #include <assert.h>
 
-/*Syntax: playGame()*/
-/*TODO*/
+char input[20];
+
 int playGame()
 {
-	noecho();
-	printFrom(20, 4, "TEST: You've logged in as ");
-	printw("%s", username);
-	printFrom(21, 4, "This part of code is not completed yet, press any key "
-			"to exit ");
-	printFrom(22, 4, "That you for you time spent on testing this game ");
-	getch();
-	echo();
-	return 0;
+    displaySense(hearing, "Test #1");
+    displaySense(sight, "Test #2 : This text is supposed to be longer than "
+                 "60 characters to test the feature of cutting into two lines");
+    getch();
 }
-/*End of playGame*/
-

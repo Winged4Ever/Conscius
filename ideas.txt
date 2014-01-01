@@ -1,12 +1,72 @@
-	IDEAS:
-	
-	-When something would make you unconscious, you start to experience some events not making any sense to you, which would look like an e.g. jump through the plot or maybe your somehow altered memories (e.g. 3 virtual days ago you've hunted a dragon and not, in this time game you can experience it but in an altered way, e.g. you may be a frog ^^) in which you may, if you can, interact. Then you would wake up and figure it out that this was just a dream. Or maybe it wasn't just a dream ;]
-	
-	-How an editor might work:
-Simple map creator build in which you may select desired space on the map -> 
-You will be asked to choose the type of an object which you want to place->
-If there is no desired archetype in the database, you will be asked to create one ->
-If you say yes, object creator will be executed ->
-You will be asked to choose the material type ->
-If there is no desired archetype in the database, you will be asked to create one -> 
-e.t.c. e.t.c.
+    IDEAS:
+
+    -How an editor might work:
+    Simple map creator build in which you may select desired space on the map ->
+    You will be asked to choose the type of an object which you want to place->
+    If there is no desired archetype in the database, you will be asked to create one ->
+    If you say yes, object creator will be executed ->
+    You will be asked to choose the material type ->
+    If there is no desired archetype in the database, you will be asked to create one ->
+    e.t.c. e.t.c.
+
+    -QTE's
+
+    -When something would make you unconscious, you start to experience some
+    events not making any sense to you, which would look like an e.g. jumping
+    through the plot or maybe your somehow altered memories (e.g. 3 virtual days
+    ago you've hunted a dragon and this time the game would make you experience
+    it but in an altered way, e.g. you may be a frog ^^) in which you may, if
+    you can, interact. Then you would wake up and figure it out that this was
+    just a dream. Or maybe it wasn't just a dream ;]
+
+    -When avatar is not concentrated enough on ones senses, info about them
+    would be interlaced with blank characters (with some kind of viscosity
+    mechanism) or with strange symbols
+
+    -When avatar is more skilled on concentrating and/or meditation things, ones
+    can concentrate fully on more than one sense, with even better results
+
+    -After logging in, avatar is inattentive, and requires 'waking' him up.
+    Meanwhile, time is not running, only random thoughts are being displayed
+
+    -Ones can focus on chosen sense by typing corresponding character of given
+    sense eg. '@' for hearing
+
+    -Make a tutorial about the interface and the very basic stuff
+
+    -Senses can be dormant, ones can be more awake or more latent of choice,
+    depending of concentration skill
+
+    -Reaction mechanism, when some actions arouses reflex sense, reflex time bar
+    would show up, and depending on out concentration skill, it would expire
+    faster or slower, giving the player particular amount of time to react
+
+    -when ones would like to go AFK, first he would need to find a calm place,
+    in order to daydream to enable AFK/exit option. Only when game is turned of
+    when daydreaming, the progress would save. And depending on avatars
+    concentration skill, ones can daydream on various places, in various
+    situations, in various rate. If the avatar has been "unplugged" while not
+    daydreaming, after the next game load, one will wake up in a strange place,
+    with strong headache, just as he would have rapidly woken up from beta brain
+    state in which one had very vivid visions. The seemed unsaved progress won't
+    be lost, it will be used lated in subconscious phases or in nagual mode.
+
+    -Mental disease e.g. Synesthesia
+
+    -Actions will have their sense-arousing structure, which would convey how
+    our senses can receive them
+
+    -Upper part of the terminal is designated for senses, the lower one - for
+    memory storage and commanding
+
+    -The longer avatar focuses on one (more or less)chosen sense, the more
+    stable it becomes, but for a price or others senses stability. When ones
+    concentrate too short period of time on selected sense, after switching to
+    another one, it will become partially unintelligible in a shorter period of
+    time. On a higher level of concentration ones can switch or remain focused
+    on even every sense or have clear mind for a longer time, with faster rate
+    of alternation
+
+    -Character of people would be based on Eneagram mechanism
+
+    -Epistemology based knowledge mechanism
