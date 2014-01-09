@@ -13,15 +13,17 @@ int main()
 {
 	initscr();
 	wclear(stdscr);
+    keypad(stdscr, TRUE);
 	drawInterface();
 	if (mainTerminal() != EXIT)
 	{
-		unlockInterface();
 		playGame();
+		/*After exiting the game*/
 		clearTerminal();
 		lockInterface();
 	}
 	closeInterface();
+
 	endwin();
 	return 0;
 }

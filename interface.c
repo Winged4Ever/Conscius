@@ -8,7 +8,6 @@
 #include <windows.h>
 #include <assert.h>
 
-/*'Matrix' is made of 80x24 characters + one '\n' on each of the line*/
 char asciiTerminal[WIDTH][HEIGHT];
 char username[20], pass[20];
 
@@ -19,97 +18,15 @@ void drawInterface()
 	/*Turn the visibility of the cursor for the animation time*/
 	silenceOn();
 	neonAnimation(". . . LOADING . . .", 18);
-	Sleep (AVERSPEED);
 	arrayTheArt();
-	invardLineSlide(18, print);
-	Sleep (AVERSPEED);
+	invardArrayLineSlide(18, print);
 	ejectAnimation(19, down);
-	Sleep (AVERSPEED);
+    Sleep (NORMSPEED);
 	ejectAnimation(17, up);
 	/*Set the cursor inside the commanding area*/
-	printAndWriteFrom(20, "> ");
 	silenceOff();
 }
 /*End of drawInterface*/
-
-/*Syntax: invardLineSlide(line, print/clear)*/
-/*Stylish animation of one line*/
-void f_invardLineSlide(int line, char* whatToDo)
-{
-	int j = WIDTH, i;
-
-	/*Will print chosen line from 'borders' of the line, inwards*/
-	if (strcmp(whatToDo, "print") == 0)
-	{
-		for (i = 0; i != j; i++)
-		{
-			move(line,i);
-			printw("%c",asciiTerminal[i][line-1]);
-			move(line,j);
-			printw("%c",asciiTerminal[j][line-1]);
-			wrefresh(stdscr);
-			j--;
-			Sleep (AHORSPEED);
-		}
-		int center = WIDTH/2;
-		move(line, center);
-		printw("%c",asciiTerminal[center][line-1]);
-	}
-	/*Will clear chosen line from 'borders' of the line, inwards*/
-	else if (strcmp(whatToDo, "clear") == 0)
-	{
-		for (i = 0; i != j; i++)
-		{
-			move(line,i);
-			printw(" ");
-			move(line,j);
-			printw(" ");
-			wrefresh(stdscr);
-			j--;
-			Sleep (AHORSPEED);
-		}
-		int center = WIDTH/2;
-		move(line,center);
-		printw(" ");
-	}
-	else
-	{
-		perror ("Invalid option");
-		assert(!TRUE);
-	}
-	wrefresh(stdscr);
-}
-/*End of invardLineSlide*/
-
-/*Syntax: neonAnimation("text", in what line)*/
-/*Even more stylish animation of provided string*/
-void neonAnimation(char* text, int line)
-{
-	int i = 0, origin = 0, length = 0;
-
-	length = stringLength(text);
-	origin = 40 - (length/2);
-
-	/*Print it on the center of chosen line*/
-	for (i = 0; i <= length; i++)
-	{
-		move(line, origin+i);
-		printw("%c", text[i]);
-		wrefresh(stdscr);
-		Sleep (AVERSPEED);
-	}
-	i = 0;
-
-	/*De-print it*/
-	for (i = 0; i <= length; i++)
-	{
-		move(line, origin+i);
-		printw(" ");
-		wrefresh(stdscr);
-		Sleep (AVERSPEED);
-	}
-}
-/*End of neonAnimation*/
 
 /*Syntax: ejectAnimation(from which line, in what direction)*/
 /*Ejecting animation from chosen line, pointed upward or downward*/
@@ -127,16 +44,19 @@ void f_ejectAnimation(int from, char* direction)
 		 reach the last terminal's row*/
 		for (counter = 0; counter < linesLeft; counter++)
 		{
+		    /*Wait some time before printing next animation's step*/
+            Sleep (NORMSPEED);
 			for (z = 0; z <= j; z++)
 			{
 				moveAndPrint((from + z), (HEIGHT - j + z));
 			}
 			z = 0;
 			j++;
-			wrefresh(stdscr);
-			/*Wait some time before printing next animation's step*/
-			Sleep (AVERSPEED);
+            wrefresh(stdscr);
 		}
+		/*A little, lazy patch*/
+        mvprintw(24, 79, "+");
+        wrefresh(stdscr);
 	}
 	else if (strcmp(direction, "up") == 0)
 	{
@@ -156,7 +76,7 @@ void f_ejectAnimation(int from, char* direction)
 			j++;
 			wrefresh(stdscr);
 			/*Wait some time before printing next animation's step*/
-			Sleep (AVERSPEED);
+			Sleep (NORMSPEED);
 		}
 	}
 	/*If provided an unknown direction*/
@@ -183,7 +103,7 @@ void f_pushAnimation(int to, char* direction)
 			/*Reload one animation step*/
 			wrefresh(stdscr);
 			/*Wait some time before printing next animation's step*/
-			Sleep (AVERSPEED);
+			Sleep (NORMSPEED);
 		}
 	}
 	else if (strcmp(direction, "up") == 0)
@@ -195,7 +115,7 @@ void f_pushAnimation(int to, char* direction)
 			/*Reload one animation step*/
 			wrefresh(stdscr);
 			/*Wait some time before printing next animation's step*/
-			Sleep (AVERSPEED);
+			Sleep (NORMSPEED);
 		}
 	}
 	/*If provided an unknown direction*/
@@ -216,7 +136,7 @@ void unlockInterface()
 	int row = 0, i = 0, k = 0, z = 0, j = 0, m = 43;
 
 	/*Move '=( @' till it reaches the last '-' char*/
-	for (i = 35; i >= 5; i--)
+	for (i = 35; i >= 4; i--)
 	{
 		m++;
 		for (row = 1; row <= 15; row += 2)
@@ -245,10 +165,8 @@ void unlockInterface()
 			moveAndPrint(j,j);
 		}
 		wrefresh(stdscr);
-		Sleep (AHORSPEED);
+		Sleep (FASTSPEED);
 	}
-	/*Make the cursor visible again and set it onto default position*/
-	printAndWriteFrom(20, "> ");
 	silenceOff();
 }
 /*End of unlockInterface*/
@@ -261,7 +179,7 @@ void lockInterface()
 	int row = 0, i = 0, k = 0, z = 0, j = 0, m = 75;
 
 	/*Move '=( @' till it reaches the center*/
-	for (i = 5; i <= 35; i++)
+	for (i = 5; i <= 36; i++)
 	{
 		m--;
 		/*Do it for all rows*/
@@ -292,21 +210,225 @@ void lockInterface()
 		}
 		/*Reload buffer each step*/
 		wrefresh(stdscr);
-		Sleep (AHORSPEED);
+		Sleep (FASTSPEED);
 	}
 	silenceOff();
 }
 /*End of lockInterface*/
 
 /*Syntax: mainTerminal()*/
-/*Menu phase of command-receiving mechanism*/
+/*Main menu*/
 int mainTerminal()
+{
+    char opt1[] = "Identify";
+    char opt2[] = "About";
+    char opt3[] = "Exit";
+    int posAct = 1;
+    int input = 0;
+    const short int posMin = 1;
+    const short int posMax = 3;
+
+    clearCommander(0);
+
+    /*Repeating menu loop*/
+    while (1 == 1)
+    {
+        silenceOn();
+        /*Let the text be created! Every time!*/
+        invardTextLineSlide(20, opt1);
+        invardTextLineSlide(21, opt2);
+        invardTextLineSlide(22, opt3);
+        input = 0;
+        /*Text appearance loop*/
+        while (1 == 1)
+        {
+            if (input == KEY_UP)
+            {
+                posAct--;
+            }
+            else if (input == KEY_DOWN)
+            {
+                posAct++;
+            }
+            /*If ENTER is pressed, exit the loop*/
+            else if (input == 10)
+            {
+                break;
+            }
+            /*In case if moved outside the min and max boundary*/
+            if (posAct > posMax)
+            {
+                posAct = posMin;
+            }
+            else if (posAct < posMin)
+            {
+                posAct = posMax;
+            }
+            /*Change the text appearance*/
+            switch(posAct)
+            {
+                case 1:
+                    attron(A_REVERSE);
+                    printCenter(20, opt1, 0);
+                    attroff(A_REVERSE);
+                    printCenter(21, opt2, 0);
+                    printCenter(22, opt3, 0);
+                    break;
+                case 2:
+                    printCenter(20, opt1, 0);
+                    attron(A_REVERSE);
+                    printCenter(21, opt2, 0);
+                    attroff(A_REVERSE);
+                    printCenter(22, opt3, 0);
+                    break;
+                case 3:
+                    printCenter(20, opt1, 0);
+                    printCenter(21, opt2, 0);
+                    attron(A_REVERSE);
+                    printCenter(22, opt3, 0);
+                    attroff(A_REVERSE);
+                    break;
+            }
+            /*Wait for input*/
+            flushinp();
+            input = getch();
+        }
+        switch (posAct)
+        {
+            case 1:
+                /*If the player has successfully logged in*/
+                if (identifyMenu() == TRUE)
+                {
+                    return 0;
+                }
+                /*If the player has created a new account or left that menu*/
+                clearCommander(0);
+                break;
+            case 2:
+                aboutGame();
+                clearCommander(0);
+                break;
+            case 3:
+                clearCommander(0);
+                return EXIT;
+                break;
+        }
+        /*Run this menu again*/
+        continue;
+    }
+	return 0;
+}
+/*End of mainTerminal*/
+
+/*Derived sub-menu of main menu*/
+int identifyMenu()
+{
+    char opt1[] = "Existing profile";
+    char opt2[] = "New profile";
+    char opt3[] = "Back";
+    int posAct = 1;
+    int input = 0;
+    const short int posMin = 1;
+    const short int posMax = 3;
+
+    clearCommander(0);
+
+    /*Repeating menu loop*/
+    while (1 == 1)
+    {
+        silenceOn();
+        /*Let the text be created!*/
+        invardTextLineSlide(20, opt1);
+        invardTextLineSlide(21, opt2);
+        invardTextLineSlide(22, opt3);
+        input = 0;
+        /*Text appearance loop*/
+        while (1 == 1)
+        {
+            if (input == KEY_UP)
+            {
+                posAct--;
+            }
+            else if (input == KEY_DOWN)
+            {
+                posAct++;
+            }
+            /*If ENTER is pressed, exit the loop*/
+            else if (input == 10)
+            {
+                break;
+            }
+            /*In case if moved outside the min and max boundary*/
+            if (posAct > posMax)
+            {
+                posAct = posMin;
+            }
+            else if (posAct < posMin)
+            {
+                posAct = posMax;
+            }
+            /*Change the text appearance*/
+            switch(posAct)
+            {
+                case 1:
+                    attron(A_REVERSE);
+                    printCenter(20, opt1, 0);
+                    attroff(A_REVERSE);
+                    printCenter(21, opt2, 0);
+                    printCenter(22, opt3, 0);
+                    break;
+                case 2:
+                    printCenter(20, opt1, 0);
+                    attron(A_REVERSE);
+                    printCenter(21, opt2, 0);
+                    attroff(A_REVERSE);
+                    printCenter(22, opt3, 0);
+                    break;
+                case 3:
+                    printCenter(20, opt1, 0);
+                    printCenter(21, opt2, 0);
+                    attron(A_REVERSE);
+                    printCenter(22, opt3, 0);
+                    attroff(A_REVERSE);
+                    break;
+            }
+            /*Wait for input*/
+            flushinp();
+            input = getch();
+        }
+        switch (posAct)
+        {
+            case 1:
+                /*If the player has successfully logged in*/
+                if (userIdentify() == TRUE)
+                {
+                    return TRUE;
+                }
+                /*If the player has just left that menu*/
+                clearCommander(0);
+                break;
+            case 2:
+                createAccount();
+                clearCommander(0);
+                break;
+            case 3:
+                return 0;
+                break;
+        }
+        /*Run this menu again*/
+        continue;
+    }
+	return 0;
+}
+/*End of identifyMenu*/
+
+int mainTerminal_text()
 {
 	char prompt[20];
 
 	while (1 == 1)
 	{
-		clearCommander();
+		clearCommander(0);
 		/*Print info about help*/
         printAndWriteFrom(20, "> ");
 		printFrom(22, 6, "Type 'help' to display help entry");
@@ -333,7 +455,7 @@ int mainTerminal()
 		/*If the player would like to exit the game*/
 		else if (strcmp(prompt, "exit") == 0)
 			{
-				clearCommander();
+				clearCommander(0);
 				return EXIT;
 			}
 		/*If the player would like to create a new account*/
@@ -345,12 +467,12 @@ int mainTerminal()
 		/*If the player typed unknown command*/
 		else
 		{
-			showCommanderInfo("Unknown command");
+			showCommanderInfo("Unknown command", 1);
 		}
 	}
 	return 0;
 }
-/*End of mainTerminal*/
+/*End of mainTerminal_bu*/
 
 /*Syntax: userIdentify()*/
 /*Identifying phase in menu*/
@@ -359,7 +481,8 @@ int userIdentify()
 	extern char username[20];
 	char prompt[20];
 
-	clearCommander();
+	clearCommander(0);
+	silenceOff();
 
 	/*Username step*/
 	while (1 == 1)
@@ -367,6 +490,7 @@ int userIdentify()
 		printAndWriteFrom(20, "Username: ");
 		printFrom(22, 4, "Type 'exit' to break identifying process ");
 		/*Wait for input*/
+		flushinp();
 		getstr(prompt);
 		/*If the player would like to exit the logging menu*/
 		if (strcmp(prompt, "exit") == 0)
@@ -376,7 +500,8 @@ int userIdentify()
 		/*If provided username do not exist*/
 		else if (checkUsername(prompt) == FALSE)
 		{
-			showCommanderInfo("Invalid username, try again");
+			thrillerAnimation("Inconsistency detected", "Invalid username, try "
+                     "again", 1);
 			continue;
 		}
 		/*If provided username exist, assign its string into 'username' variab*/
@@ -391,7 +516,7 @@ int userIdentify()
 
 		/*Password step*/
 		memset (prompt, '\0', sizeof(prompt));
-		clearCommander();
+		clearCommander(0);
 		while (1 == 1)
 		{
 			printAndWriteFrom(20, "Password: ");
@@ -399,18 +524,19 @@ int userIdentify()
 			readPassword(prompt);
 			if (strcmp(prompt, "exit") == 0)
 			{
-				showCommanderInfo("Identifying has being canceled");
+				showCommanderInfo("Identifying has being canceled",1 );
 				break;
 			}
 			if (checkPassword(prompt) == FALSE)
 			{
-				showCommanderInfo("Invalid password, try again");
+				thrillerAnimation("Inconsistency detected", "Invalid password, "
+                      "try again", 1);
 				continue;
 			}
 			/*If player had successfully logged in*/
 			else
 			{
-				showCommanderInfo("Successfully logged in");
+				thrillerAnimation("Logging in", "Successfully logged in", 1);
 				return TRUE;
 			}
 		}
@@ -425,9 +551,10 @@ int userIdentify()
  *username*/
 int checkUsername(char* username)
 {
+    silenceOff();
 	char found[20], check[20];
-	memset (found, '\0', sizeof(found));
-	memset (check, '\0', sizeof(check));
+	memset(found, '\0', sizeof(found));
+	memset(check, '\0', sizeof(found));
 	int i = 0;
 
 	FILE *pFile = fopen ("accounts.dat" , "r");
@@ -480,9 +607,11 @@ int checkUsername(char* username)
 /*Account creation phase*/
 int createAccount()
 {
+    /*TODO: Check if provided account currently exist*/
 	char prompt[20], temp_pass[20], temp_username[20];
 
-	clearCommander();
+	clearCommander(0);
+	silenceOff();
 
 	while (1 == 1)
 	{
@@ -490,6 +619,7 @@ int createAccount()
         printAndWriteFrom(20, "Type your username: ");
 		printFrom(22, 4, "Type 'exit' to break identifying process ");
 
+        flushinp();
 		getstr(prompt);
 		/*If entered different string than exit*/
 		if (strcmp(prompt, "exit") != 0)
@@ -503,7 +633,7 @@ int createAccount()
 		}
 
 		/*Password step*/
-		clearCommander();
+		clearCommander(0);
 		while (1 == 1)
 		{
             printAndWriteFrom(20, "Type your password: ");
@@ -524,7 +654,7 @@ int createAccount()
 					/*If the player had pressed ESC*/
 					if (strcmp(prompt, "exit") == 0)
 					{
-						showCommanderInfo("Account creation has being canceled");
+						showCommanderInfo("Account creation has being canceled", 1);
 						break;
 					}
 					/*If entered password match*/
@@ -570,7 +700,7 @@ int createAccount()
 							fputs(p, pFile);
 
 							showCommanderInfo("Account has been successfully "
-									"created");
+									"created", 1);
 						}
 						fclose (pFile);
 						return 0;
@@ -578,14 +708,14 @@ int createAccount()
 					/*If entered password don't match*/
 					else
 					{
-						showCommanderInfo("Passwords don't match");
+						showCommanderInfo("Passwords don't match", 1);
 						break;
 					}
 				}
 			}
 			else
 			{
-				showCommanderInfo("Account creation has being canceled");
+				showCommanderInfo("Account creation has being canceled", 1);
 				break;
 			}
 		}
@@ -600,13 +730,11 @@ int createAccount()
 void f_showHelp(char* aboutWhat)
 {
 	silenceOn();
-	clearCommander();
+	clearCommander(0);
 	/*If called from mainTerminal function*/
-	if (strcmp(aboutWhat, "mainTerminal") == 0)
+	if (strcmp(aboutWhat, " ") == 0)
 	{
-		printFrom(20, 4, "Type 'identify' to login into your existing account");
-		printFrom(21, 4, "Type 'create' to create a new account");
-		printFrom(22, 4, "Type 'exit' to exit the game");
+		printFrom(20, 4, " ");
 		wrefresh(stdscr);
 	}
 	/*If passed invalid help menu*/
@@ -616,6 +744,7 @@ void f_showHelp(char* aboutWhat)
 		assert(!TRUE);
 	}
 	/*Wait till key is being pressed*/
+	flushinp();
 	getch();
 	silenceOff();
 
@@ -630,6 +759,13 @@ void closeInterface()
 	silenceOn();
 	pushAnimation(17, down);
 	pushAnimation(19, up);
-	invardLineSlide(18, clear);
+	invardArrayLineSlide(18, clear);
 }
 /*End of closeInterface*/
+
+/*Derived sub-menu of main menu*/
+void aboutGame()
+{
+
+}
+/*End of aboutGame*/

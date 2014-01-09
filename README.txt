@@ -1,7 +1,7 @@
 	PROLOGUE:
 	What if one day we woke up and noticed that we are able to use every our sense on equally high level on awareness, including senses which may be totally foreign to us such as just knowing some things that we aren't used to know without asking which we may discover through our journey? Or what if after some time spent in this world you would have learned how to 'travel' to different worlds which may be so immensely subnormal to ours? Then you probably would ask yourself a question: "Where are we from? I mean our inners, spirits, not bodies. Is it far far away, or so close that we couldn't even consider that? Or maybe the distance isn't the measure we ought to think about in this case or to be more accurate we shoudn't use any of unit known to us?" One thing is sure - this game is about this, inspired by teachings of Don Juan.
 	GENERAL:
-	"Conscius" will be a text-based RPG game where the crucial role plays our avatar's virtual senses e.g. f_sight, f_hearing and etc. 
+	"Conscius" will be a text-based RPG game where the crucial role plays our avatar's virtual senses e.g. f_sight, f_hearing and etc.
 	As from the psychological aspect the title word 'consciousness' itself acts as a key function - through inner, programmed f_awareness it conveys interpreted informations to the console output, which then is transfered into our awareness through reading. I'll try to omit usage of clearly mechanical things such as health or stamina so to project a feel of real living 'body'.
 	So in my main interest is to make all the output informations sent by a virtual world as easiest as possible to interpret by player's brain via console interface.
 	Our world is divided by our brains into archetypes, so each archetype will have stored it's primary properties e.g. temperature or brightness, so 'senses' via comparing their properties of one environment with another will convey appropriate interpretations to the f_awareness.
@@ -9,4 +9,4 @@
 	SETTING:
 	Dark fantasy world - ogres, goblins, skeletons and all those stuff which will attract player for long enough to let the fun begin ^^
 	AXIOMS:
-	-Reality is like an onion, it have a lot of deeper and shallower worlds which varies in physics
+	-Reality is like an onion, it have a lot of deeper and shallower worlds which varies in perception

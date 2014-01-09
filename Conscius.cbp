@@ -63,6 +63,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="research.txt" />
+		<Unit filename="saveGame.dat" />
 		<Unit filename="scenario.txt" />
 		<Extensions>
 			<code_completion />
